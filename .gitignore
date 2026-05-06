@@ -53,3 +53,9 @@ dkms.conf
 
 # debug information files
 *.dwo
+
+deps/raylib/
+build/
+.vscode/*
+!.vscode/c_cpp_properties.json
+!.vscode/settings.json
