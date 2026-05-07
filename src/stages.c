@@ -8,7 +8,7 @@ void* loader(void* param){
         int i = p->loaderCount++;
         pthread_mutex_unlock(&p->loaderMutex);
 
-        if(i > p->batch.count){
+        if(i >= p->batch.count){
             break;
         }
 
@@ -18,6 +18,36 @@ void* loader(void* param){
         }
 
         bufferPush(&p->loaded, img);
+    }
+
+    pthread_exit(NULL);
+}
+
+
+void* enhancer(void* param){
+    Pipeline* p = param;
+
+    while(1){
+        pthread_mutex_lock(&p->enhancerMutex);
+        int i = p->enhancerCount++;
+        pthread_mutex_unlock(&p->enhancerMutex);
+
+        if(i >= p->batch.count){
+            break;
+        }
+
+        Image img = bufferPop(&p->filtered);
+        if(img.data == NULL){
+            continue;
+        }
+
+        if(p->enhancerName != NULL){
+            //using raylib placeholder temporarily (brightness feature)
+            if(TextIsEqual(p->enhancerName, "brightness")){
+                ImageColorBrightness(&img, 50); 
+            }
+        }
+        bufferPush(&p->enhanced, img);
     }
 
     pthread_exit(NULL);
