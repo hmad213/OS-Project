@@ -7,6 +7,7 @@
 #define NUMBER_SAVERS 2
 
 #include "buffer.h"
+#include <pthread.h>
 
 typedef struct{
     char** paths;
@@ -25,6 +26,17 @@ typedef struct Pipeline{
 
     char* filterName;
     char* enhancerName;
+    
+    // All of these are initialized to 0
+    int loaderCount;
+    int filterCount;
+    int enhancerCount;
+    int saverCount;
+
+    pthread_mutex_t loaderMutex;
+    pthread_mutex_t filterMutex;
+    pthread_mutex_t enhancerMutex;
+    pthread_mutex_t saverMutex;
 
     Batch batch;
 };
