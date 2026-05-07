@@ -5,6 +5,7 @@
 #define NUMBER_FILTERS 3
 #define NUMBER_ENHANCERS 3
 #define NUMBER_SAVERS 2
+#define BUFFER_CAPACITY 10
 
 #include "buffer.h"
 #include <pthread.h>
