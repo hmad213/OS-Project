@@ -39,6 +39,6 @@ typedef struct Pipeline{
     pthread_mutex_t saverMutex;
 
     Batch batch;
-};
+}Pipeline;
 
 #endif

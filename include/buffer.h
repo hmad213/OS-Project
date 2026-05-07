@@ -6,12 +6,15 @@
 #include <semaphore.h>
 
 typedef struct {
-    Image      *slots;
-    int         capacity;
-    int         head, tail, count;
+    Image* slots;
+    int capacity;
+    int head, tail, count;
     pthread_mutex_t lock;
-    sem_t       empty;
-    sem_t       full;
+    sem_t empty;
+    sem_t full;
 } Buffer;
+
+void bufferPush(Buffer* buf, Image img);
+Image bufferPop(Buffer* buf);
 
 #endif
