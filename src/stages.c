@@ -8,7 +8,7 @@ void* loader(void* param){
         int i = p->loaderCount++;
         pthread_mutex_unlock(&p->loaderMutex);
 
-        if(i > p->batch.count){
+        if(i >= p->batch.count){
             break;
         }
 
@@ -18,6 +18,51 @@ void* loader(void* param){
         }
 
         bufferPush(&p->loaded, img);
+    }
+
+    pthread_exit(NULL);
+}
+
+void* applyEnhancement(Image *img, const char *type){
+    if(type == NULL || img->data == NULL) return;
+
+    if(strcmp(type, "Warmth") == 0){
+        warmth(&img);
+    }
+    else if(strcmp(type, "Brighten") == 0){
+        brighten(&img);
+    }
+    else if(strcmp(type, "Contrast") == 0){
+        contrast(&img);
+    }
+    else if(strcmp(type, "Sharpen") == 0){
+        sharpen(&img);
+    }
+    else if(strcmp(type, "Saturate") == 0){
+        saturate(&img);
+    }
+}
+
+void* enhancer(void* param){
+    Pipeline* p = param;
+
+    while(1){
+        pthread_mutex_lock(&p->enhancerMutex);
+        int i = p->enhancerCount++;
+        pthread_mutex_unlock(&p->enhancerMutex);
+
+        if(i >= p->batch.count){
+            break;
+        }
+
+        Image img = bufferPop(&p->filtered);
+        if(img.data == NULL){
+            continue;
+        }
+
+        applyEnhancement(&img, p->enhancerName);
+
+        bufferPush(&p->enhanced, img);
     }
 
     pthread_exit(NULL);
