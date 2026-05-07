@@ -3,12 +3,13 @@
 
 #include "pipeline.h"
 #include "enhancers.h"
+#include <string.h>
 
 void* loader(void* param);
 void* filter(void* param);
 void* enhancer(void* param);
 void* saver(void* param);
 
-void* applyEnhancement(Image *img, const char* type);
+void applyEnhancement(Image *img, const char* type);
 
 #endif
