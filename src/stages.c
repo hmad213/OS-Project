@@ -23,6 +23,8 @@ void* loader(void* param){
     pthread_exit(NULL);
 }
 
+
+
 void* applyEnhancement(Image *img, const char *type){
     if(type == NULL || img->data == NULL) return;
 
@@ -65,5 +67,32 @@ void* enhancer(void* param){
         bufferPush(&p->enhanced, img);
     }
 
+    pthread_exit(NULL);
+}
+
+
+
+void* filter(void* param){
+    Pipeline *p = param;
+
+    while(1){
+        pthread_mutex_lock(&p->filterMutex);
+        int i= p->filterCount++;
+        pthread_mutex_unlock(&p->filterMutex);
+
+        if(i >= p->batch.count){
+            break;
+        }
+        Image img = bufferPop(&p->loaded);
+
+        if(strcmp(p->filterName , "grascale") == 0){
+            ImageColorGrayscale(&img);
+        } else if(strcmp(p->filterName , "contrast") == 0){
+            ImageColorContrast(&img , 40.0f);
+        } else if(strcmp(p->filterName , "blur") == 0){
+            ImageBlurGaussian(&img , 4);
+        }
+        bufferPush(&p->filtered , img);
+    }
     pthread_exit(NULL);
 }
