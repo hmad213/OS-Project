@@ -85,12 +85,18 @@ void* filter(void* param){
         }
         Image img = bufferPop(&p->loaded);
 
-        if(strcmp(p->filterName , "grascale") == 0){
-            ImageColorGrayscale(&img);
-        } else if(strcmp(p->filterName , "contrast") == 0){
-            ImageColorContrast(&img , 40.0f);
-        } else if(strcmp(p->filterName , "blur") == 0){
-            ImageBlurGaussian(&img , 4);
+        if(strcmp(p->filterName , "grayscale") == 0){
+            filterGrayscale(&img);
+
+        } 
+        else if(strcmp(p->filterName , "funky") == 0){
+            filterFunky(&img);
+        } 
+        else if(strcmp(p->filterName , "invert") == 0){
+            filterInvert(&img);
+        }
+        else if(strcmp(p->filterName , "sepia") == 0){
+            filterSepia(&img);
         }
         bufferPush(&p->filtered , img);
     }
