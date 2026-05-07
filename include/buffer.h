@@ -3,6 +3,8 @@
 
 #include "raylib.h"
 #include <pthread.h>
+#include <stdlib.h>
+#include <stdio.h>
 #include <semaphore.h>
 
 typedef struct {

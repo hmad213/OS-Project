@@ -48,5 +48,5 @@ void bufferDestroy(Buffer * buf){
     buf->slots = NULL;
     pthread_mutex_destroy(&buf->lock);
     sem_destroy(&buf->empty);
-    sem_destroy(&buff->full);
+    sem_destroy(&buf->full);
 }
