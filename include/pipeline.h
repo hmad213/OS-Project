@@ -41,4 +41,9 @@ typedef struct Pipeline{
     Batch batch;
 }Pipeline;
 
+void pipelineInit(Pipeline* p);
+void pipelineDestroy(Pipeline* p);
+void batchInit(Batch* b, int size);
+void batchDestroy(Batch* b);
+
 #endif

@@ -16,5 +16,7 @@ typedef struct {
 
 void bufferPush(Buffer* buf, Image img);
 Image bufferPop(Buffer* buf);
+void bufferInit(Buffer* buf, int capacity);
+void bufferDestroy(Buffer* buf);
 
 #endif
