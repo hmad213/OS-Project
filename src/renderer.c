@@ -2,7 +2,7 @@
 
 char error[100];
 
-void drawSelector(char** pathArray, int* count, int maxCount, Font font, int* stage) {
+void drawSelectorStage(char** pathArray, int* count, int maxCount, Font font, int* stage) {
     const float btnW = 200;
     const float btnH = 60;
     const float spacing = 40;
@@ -17,30 +17,43 @@ void drawSelector(char** pathArray, int* count, int maxCount, Font font, int* st
     if (CheckCollisionPointRec(GetMousePosition(), btnLoad) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
         FILE *fp = popen("zenity --file-selection --multiple --separator='|' --title='Select Images'", "r");
         if (fp) {
-            char buffer[4096];
-            if (fgets(buffer, sizeof(buffer), fp)) {
-                buffer[strcspn(buffer, "\n")] = 0;
-                char *token = strtok(buffer, "|");
-                while (token && *count < maxCount) {
-                    if (IsFileExtension(token, ".png")  || IsFileExtension(token, ".bmp") || 
-                        IsFileExtension(token, ".tga")  || IsFileExtension(token, ".jpg") || 
-                        IsFileExtension(token, ".jpeg") || IsFileExtension(token, ".gif") || 
-                        IsFileExtension(token, ".qoi")  || IsFileExtension(token, ".psd"))
-                    {
-                        pathArray[*count] = strdup(token);
-                        (*count)++;
-                        strcpy(error, "");
-                    }else{
-                        strcpy(error, "Error: File format must be one of the following [png, jpg, jpeg, bmp, tga, gif, qoi, psd]!");
-                    }
-                    token = strtok(NULL, "|");
+            char buffer[4096] = {0};
+            // Read entire output, not just first line
+            size_t total = 0;
+            while (total < sizeof(buffer) - 1) {
+                size_t n = fread(buffer + total, 1, sizeof(buffer) - 1 - total, fp);
+                if (n == 0) break;
+                total += n;
+            }
+            buffer[total] = 0;
+            buffer[strcspn(buffer, "\n")] = 0; // strip trailing newline
+
+            printf("raw: '%s'\n", buffer); // debug: see exactly what zenity returned
+
+            char *token = strtok(buffer, "|");
+            while (token && *count < maxCount) {
+                // strip any leading/trailing whitespace from token
+                while (*token == ' ') token++;
+                char *end = token + strlen(token) - 1;
+                while (end > token && *end == ' ') *end-- = 0;
+
+                if (IsFileExtension(token, ".png")  || IsFileExtension(token, ".bmp") ||
+                    IsFileExtension(token, ".jpg")  || IsFileExtension(token, ".jpeg"))
+                {
+                    pathArray[*count] = strdup(token);
+                    printf("path[%d]: '%s'\n", *count, pathArray[*count]);
+                    (*count)++;
+                    strcpy(error, "");
+                } else {
+                    strcpy(error, "Error: File format must be one of the following [png, jpg, jpeg, bmp]!");
                 }
+                token = strtok(NULL, "|");
             }
             pclose(fp);
         }
     }
 
-    if (CheckCollisionPointRec(GetMousePosition(), btnLoad) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && *count > 0){
+    if (CheckCollisionPointRec(GetMousePosition(), btnNext) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && *count > 0){
         (*stage) = 1;
         strcpy(error, "");
     }
@@ -71,4 +84,18 @@ void drawButton(Rectangle bounds, const char* text, Color color) {
              bounds.x + (bounds.width / 2.0f) - (textWidth / 2.0f), 
              bounds.y + (bounds.height / 2.0f) - (fontSize / 2.0f), 
              20, WHITE);
+}
+
+void drawProgressStage(Pipeline* p){
+    BeginDrawing();
+        ClearBackground((Color){60, 60, 60, 255});
+        DrawText("Progress", 100, 100, 10, BLACK);
+    EndDrawing();
+}
+
+void drawFinishStage(){
+    BeginDrawing();
+        ClearBackground((Color){60, 60, 60, 255});
+        DrawText("Progress", 100, 100, 10, BLACK);
+    EndDrawing();
 }

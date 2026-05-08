@@ -5,6 +5,7 @@
 #include "enhancers.h"
 #include "filters.h"
 #include <string.h>
+#include <sys/stat.h>
 
 void* loader(void* param);
 void* filter(void* param);
@@ -12,5 +13,6 @@ void* enhancer(void* param);
 void* saver(void* param);
 
 void applyEnhancement(Image *img, const char* type);
+void applyFilter(Image* img, const char* type);
 
 #endif

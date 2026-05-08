@@ -1,7 +1,7 @@
 #ifndef PIPELINE_H
 #define PIPELINE_H
 
-#define NUMBER_LOADERS 2
+#define NUMBER_LOADERS 1
 #define NUMBER_FILTERS 3
 #define NUMBER_ENHANCERS 3
 #define NUMBER_SAVERS 2

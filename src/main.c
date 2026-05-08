@@ -10,14 +10,29 @@ int main(void)
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "raylib project");
     SetTargetFPS(60);
 
+    int pipelineStarted = 0;
+
     Font font = LoadFont("./assets/Roboto.ttf");
 
     while (!WindowShouldClose())
     {
         BeginDrawing();
 
+        if(stage == 1 && !pipelineStarted){
+            runPipeline(&pipeline);
+            pipelineStarted = 1;
+        }
+
         if(stage == 0){
-            drawSelector(pipeline.batch.paths, &pipeline.batch.index, pipeline.batch.count, font, &stage);
+            drawSelectorStage(pipeline.batch.paths, &pipeline.batch.index, pipeline.batch.count, font, &stage);
+        }else if(stage == 1){
+            drawProgressStage(&pipeline);
+        }else if(stage == 2){
+            drawFinishStage(&pipeline);
+        }
+
+        if(pipeline.saverCount > pipeline.batch.count){
+            stage == 2;
         }
 
         EndDrawing();

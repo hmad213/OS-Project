@@ -21,8 +21,7 @@ TARGET="$BUILD_DIR/game"
 # ─────────────────────────────────────────────
 install_raylib() {
     echo "[run.sh] raylib not found. Building raylib $RAYLIB_VERSION into $RAYLIB_DIR/ ..."
- 
-    # Check for required tools
+
     for tool in git cmake gcc; do
         if ! command -v "$tool" &>/dev/null; then
             echo "[run.sh] ERROR: '$tool' is required but not installed."
@@ -30,8 +29,7 @@ install_raylib() {
             exit 1
         fi
     done
- 
-    # Install required system dev libraries for raylib/GLFW
+
     echo "[run.sh] Installing required system libraries..."
     sudo apt-get install -y \
         libx11-dev \
@@ -41,23 +39,33 @@ install_raylib() {
         libxi-dev \
         libgl1-mesa-dev \
         libglu1-mesa-dev
- 
+
     TMP_DIR=$(mktemp -d)
     trap 'rm -rf "$TMP_DIR"' EXIT
- 
+
     git clone --depth 1 --branch "$RAYLIB_VERSION" \
         https://github.com/raysan5/raylib.git "$TMP_DIR/raylib"
- 
+
+    # ── Patch: force JPEG/BMP support in rtextures.c ────────────
+    RTEX="$TMP_DIR/raylib/src/rtextures.c"
+    sed -i 's/#if !defined(SUPPORT_FILEFORMAT_JPG)/#if 0 \/\/ forced on/' "$RTEX"
+    sed -i 's/#if !defined(SUPPORT_FILEFORMAT_BMP)/#if 0 \/\/ forced on/' "$RTEX"
+    echo "[run.sh] Patched rtextures.c for JPEG and BMP support"
+    # ────────────────────────────────────────────────────────────
+
     cmake -S "$TMP_DIR/raylib" -B "$TMP_DIR/build" \
         -DCMAKE_BUILD_TYPE=Release \
         -DBUILD_SHARED_LIBS=OFF \
         -DCMAKE_INSTALL_PREFIX="$(pwd)/$RAYLIB_DIR" \
         -DBUILD_EXAMPLES=OFF \
+        -DSUPPORT_FILEFORMAT_PNG=ON \
+        -DSUPPORT_FILEFORMAT_JPG=ON \
+        -DSUPPORT_FILEFORMAT_BMP=ON \
         -Wno-dev
- 
+
     cmake --build "$TMP_DIR/build" --parallel "$(nproc)"
     cmake --install "$TMP_DIR/build"
- 
+
     echo "[run.sh] raylib $RAYLIB_VERSION ready in $RAYLIB_DIR/"
 }
  
