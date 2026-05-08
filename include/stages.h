@@ -3,6 +3,7 @@
 
 #include "pipeline.h"
 #include "enhancers.h"
+#include "filters.h"
 #include <string.h>
 
 void* loader(void* param);

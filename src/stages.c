@@ -85,14 +85,54 @@ void* filter(void* param){
         }
         Image img = bufferPop(&p->loaded);
 
-        if(strcmp(p->filterName , "grascale") == 0){
-            ImageColorGrayscale(&img);
-        } else if(strcmp(p->filterName , "contrast") == 0){
-            ImageColorContrast(&img , 40.0f);
-        } else if(strcmp(p->filterName , "blur") == 0){
-            ImageBlurGaussian(&img , 4);
+        if(strcmp(p->filterName , "grayscale") == 0){
+            filterGrayscale(&img);
+
+        } 
+        else if(strcmp(p->filterName , "funky") == 0){
+            filterFunky(&img);
+        } 
+        else if(strcmp(p->filterName , "invert") == 0){
+            filterInvert(&img);
+        }
+        else if(strcmp(p->filterName , "sepia") == 0){
+            filterSepia(&img);
         }
         bufferPush(&p->filtered , img);
+    }
+    pthread_exit(NULL);
+}
+
+
+
+void* saver(void* param){
+    Pipeline* p = param;
+
+    mkdir("./output", 0777);              
+
+    while(1){
+        pthread_mutex_lock(&p->saverMutex);
+        int i = p->saverCount++;
+        pthread_mutex_unlock(&p->saverMutex);
+
+        if(i >= p->batch.count){
+            break;
+        }
+
+        Image img = bufferPop(&p->enhanced);
+        if(img.data == NULL){
+            continue;
+        }
+
+        const char* srcPath = p->batch.paths[i];
+        const char* filename = strrchr(srcPath, '/');
+        const char* justName = filename ? filename + 1 : srcPath;  
+        char outPath[512];
+        strcpy(outPath, "./output/");   
+        strcat(outPath, justName);     
+
+        ExportImage(img, outPath);
+        UnloadImage(img);
     }
     pthread_exit(NULL);
 }
