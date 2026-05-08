@@ -10,6 +10,7 @@
 
 #include "buffer.h"
 #include <pthread.h>
+#include "stages.h"
 
 typedef struct{
     char** paths;

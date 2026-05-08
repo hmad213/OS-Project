@@ -55,5 +55,16 @@ void pipelineDestroy(Pipeline* p){
 }
 
 void runPipeline(Pipeline* p){
-    
+    for(int i = 0; i < NUMBER_LOADERS; i++){
+        pthread_create(p->loader[i], NULL, loader, p);
+    }
+    for(int i = 0; i < NUMBER_ENHANCERS; i++){
+        pthread_create(p->enhancer[i], NULL, enhancer, p);
+    }
+    for(int i = 0; i < NUMBER_FILTERS; i++){
+        pthread_create(p->filter[i], NULL, filter, p);
+    }
+    for(int i = 0; i < NUMBER_SAVERS; i++){
+        pthread_create(p->saver[i], NULL, saver, p);
+    }
 }
