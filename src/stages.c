@@ -11,7 +11,6 @@ void* loader(void* param){
         if(i >= p->batch.index){
             break;
         }
-        printf("loader: %d\n", i);
 
         Image img = LoadImage(p->batch.paths[i]);
     
@@ -22,7 +21,9 @@ void* loader(void* param){
         }
 
         bufferPush(&p->loaded, img);
-        printf("pushed\n");
+        pthread_mutex_lock(&p->loaderMutex);
+        int i = p->loadedCount++;
+        pthread_mutex_unlock(&p->loaderMutex);
     }
 
     pthread_exit(NULL);
@@ -63,7 +64,6 @@ void* enhancer(void* param){
         }
 
         Image img = bufferPop(&p->filtered);
-        printf("HEllo from enhancer!\n");
 
         if(img.data == NULL){
             continue;
@@ -71,9 +71,11 @@ void* enhancer(void* param){
 
         applyEnhancement(&img, p->enhancerName);
 
-        printf("Enhanced!\n");
-
         bufferPush(&p->enhanced, img);
+
+        pthread_mutex_lock(&p->enhancerMutex);
+        int i = p->enhancedCount++;
+        pthread_mutex_unlock(&p->enhancerMutex);
     }
 
     pthread_exit(NULL);
@@ -110,13 +112,14 @@ void* filter(void* param){
 
         Image img = bufferPop(&p->loaded);
 
-        printf("HEllo from filterer!\n");
 
-        printf("Applying filter: %s\n", p->filterName);
         applyFilter(&img, p->filterName);
 
-        printf("Filtered\n");
         bufferPush(&p->filtered , img);
+
+        pthread_mutex_lock(&p->filterMutex);
+        int i= p->filteredCount++;
+        pthread_mutex_unlock(&p->filterMutex);
     }
     pthread_exit(NULL);
 }
@@ -147,10 +150,13 @@ void* saver(void* param){
         const char* justName = filename ? filename + 1 : srcPath;  
         char outPath[512];
         strcpy(outPath, "./output/");   
-        strcat(outPath, justName);     
+        strcat(outPath, justName);    
 
         ExportImage(img, outPath);
         UnloadImage(img);
+        pthread_mutex_lock(&p->saverMutex);
+        int i = p->savedCount++;
+        pthread_mutex_unlock(&p->saverMutex);
     }
     pthread_exit(NULL);
 }
