@@ -35,6 +35,11 @@ void pipelineInit(Pipeline* p){
     p->enhancerCount = 0;
     p->saverCount = 0;
 
+    p->loadedCount = 0;
+    p->filteredCount = 0;
+    p->enhancedCount = 0;
+    p->savedCount = 0;
+
     pthread_mutex_init(&p->loaderMutex, NULL);
     pthread_mutex_init(&p->filterMutex, NULL);
     pthread_mutex_init(&p->enhancerMutex, NULL);

@@ -37,6 +37,11 @@ typedef struct Pipeline{
     int enhancerCount;
     int saverCount;
 
+    int loadedCount;
+    int filteredCount;
+    int enhancedCount;
+    int savedCount;
+
     pthread_mutex_t loaderMutex;
     pthread_mutex_t filterMutex;
     pthread_mutex_t enhancerMutex;
