@@ -223,15 +223,48 @@ void drawFilterStage(Font font, char** filter, int* stage){
 }
 
 void drawProgressStage(Pipeline* p){
-    BeginDrawing();
-        ClearBackground((Color){60, 60, 60, 255});
-        DrawText("Progress", 100, 100, 10, BLACK);
-    EndDrawing();
-}
+    const char* labels[] = { "Loading", "Filtering", "Enhancing", "Saving" };
+    int counts[] = { p->loadedCount, p->filteredCount, p->enhancedCount, p->savedCount };
+    int numBars = 4;
 
-void drawFinishStage(){
+    const float barWidth = 450.0f;
+    const float barHeight = 25.0f;
+    const float spacing = 80.0f;
+    const float startX = (SCREEN_WIDTH - barWidth) / 2.0f;
+    const float startY = (SCREEN_HEIGHT / 2.0f) - ((numBars * spacing) / 2.0f);
+
     BeginDrawing();
         ClearBackground((Color){60, 60, 60, 255});
-        DrawText("Progress", 100, 100, 10, BLACK);
+
+        DrawText("Processing Pipeline", (SCREEN_WIDTH / 2) - 120, startY - 60, 28, GREEN);
+
+        for (int i = 0; i < numBars; i++) {
+            float currentY = startY + (i * spacing);
+            
+            float progress = 0.0f;
+            if (p->batch.index > 0) {
+                progress = (float)counts[i] / (float)p->batch.index;
+            }
+
+            DrawText(labels[i], startX, currentY - 30, 20, RAYWHITE);
+
+            Rectangle bgRec = { startX, currentY, barWidth, barHeight };
+            DrawRectangleRounded(bgRec, 0.4f, 10, (Color){40, 40, 40, 255});
+
+            if (progress > 0) {
+                Rectangle fillRec = { startX, currentY, barWidth * progress, barHeight };
+                Color barColor = (progress >= 1.0f) ? GREEN : SKYBLUE;
+                DrawRectangleRounded(fillRec, 0.4f, 10, barColor);
+            }
+
+            const char* statusText = TextFormat("%d / %d", counts[i], p->batch.index);
+            int textWidth = MeasureText(statusText, 18);
+            DrawText(statusText, startX + barWidth - textWidth, currentY - 25, 18, GRAY);
+        }
+
+        if (p->savedCount == p->batch.index && p->batch.index > 0) {
+            DrawText("ALL TASKS COMPLETE", (SCREEN_WIDTH / 2) - 100, SCREEN_HEIGHT - 100, 20, GOLD);
+        }
+
     EndDrawing();
 }

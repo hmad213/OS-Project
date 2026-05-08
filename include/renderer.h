@@ -16,6 +16,6 @@ void drawButton(Rectangle bounds, const char* text, Color color);
 void drawFilterStage(Font f, char**, int*);
 void drawEnhancerStage(Font f, char**, int*);
 void drawProgressStage(Pipeline* p);
-void drawFinishStage();
+void drawFinishStage(Font font);
 
 #endif

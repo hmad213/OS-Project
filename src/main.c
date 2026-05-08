@@ -2,7 +2,7 @@
  
 int main(void)
 {
-    int stage = 1;
+    int stage = 0;
 
     Pipeline pipeline;
     pipelineInit(&pipeline);
@@ -31,10 +31,6 @@ int main(void)
             drawFilterStage(font, &pipeline.filterName, &stage);
         }else if(stage == 3){
             drawProgressStage(&pipeline);
-        }
-
-        if(pipeline.saverCount > pipeline.batch.count){
-            stage == 2;
         }
 
         EndDrawing();

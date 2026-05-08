@@ -22,7 +22,7 @@ void* loader(void* param){
 
         bufferPush(&p->loaded, img);
         pthread_mutex_lock(&p->loaderMutex);
-        int i = p->loadedCount++;
+         p->loadedCount++;
         pthread_mutex_unlock(&p->loaderMutex);
     }
 
@@ -74,7 +74,7 @@ void* enhancer(void* param){
         bufferPush(&p->enhanced, img);
 
         pthread_mutex_lock(&p->enhancerMutex);
-        int i = p->enhancedCount++;
+         p->enhancedCount++;
         pthread_mutex_unlock(&p->enhancerMutex);
     }
 
@@ -118,7 +118,7 @@ void* filter(void* param){
         bufferPush(&p->filtered , img);
 
         pthread_mutex_lock(&p->filterMutex);
-        int i= p->filteredCount++;
+        p->filteredCount++;
         pthread_mutex_unlock(&p->filterMutex);
     }
     pthread_exit(NULL);
@@ -155,7 +155,7 @@ void* saver(void* param){
         ExportImage(img, outPath);
         UnloadImage(img);
         pthread_mutex_lock(&p->saverMutex);
-        int i = p->savedCount++;
+        p->savedCount++;
         pthread_mutex_unlock(&p->saverMutex);
     }
     pthread_exit(NULL);
