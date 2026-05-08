@@ -86,6 +86,83 @@ void drawButton(Rectangle bounds, const char* text, Color color) {
              20, WHITE);
 }
 
+void drawEnhancerStage(Font font, char** enhancer, int* stage){
+    const char* enhancers[] = {
+        WARMTH, BRIGHTEN, CONTRAST, SHARPEN, SATURATE
+    };
+
+    char* selectorText = "Please select an Enhancer: ";
+    Vector2 imgTextSize = MeasureTextEx(font, selectorText, 30, 2.0f);
+
+    float btnW = 180.0f;
+    float btnH = 50.0f;
+    float hSpacing = 20.0f;
+    float vSpacing = 20.0f;
+    float startY = 250.0f;
+
+    float row1Width = (3 * btnW) + (2 * hSpacing);
+    float row2Width = (2 * btnW) + (1 * hSpacing);
+
+    float startX1 = (GetScreenWidth() - row1Width) / 2.0f;
+    float startX2 = (GetScreenWidth() - row2Width) / 2.0f;
+
+    Vector2 mousePos = GetMousePosition();
+    bool clicked = IsMouseButtonPressed(MOUSE_LEFT_BUTTON);
+
+    float startX = (SCREEN_WIDTH / 2.0f) - (200 / 2.0f);
+    float centerY = (SCREEN_HEIGHT / 2.0f);
+    Rectangle btnNext = {(SCREEN_WIDTH / 2.0f) - (200 / 2.0f), (SCREEN_HEIGHT / 2.0f) + 100.0f, 200, 60};
+
+    if(clicked && CheckCollisionPointRec(mousePos, btnNext)){
+        (*stage) = (*stage) + 1;
+    }
+
+    BeginDrawing();
+        ClearBackground((Color){60, 60, 60, 255});
+        DrawTextEx(font, selectorText, (Vector2){(SCREEN_WIDTH / 2) - (imgTextSize.x / 2), 150}, 30, 2.0f, GREEN);
+
+        for (int i = 0; i < 3; i++) {
+            Rectangle bounds = { 
+                startX1 + (i * (btnW + hSpacing)), 
+                startY, 
+                btnW, 
+                btnH 
+            };
+            if(strcmp(*enhancer, enhancers[i]) == 0){
+                drawButton(bounds, enhancers[i], GREEN);
+            }
+            else if (CheckCollisionPointRec(mousePos, bounds)) {
+                if (clicked) *enhancer = enhancers[i];
+                drawButton(bounds, enhancers[i], GRAY);
+            } else {
+                drawButton(bounds, enhancers[i], DARKGRAY);
+            }
+        }
+
+        for (int i = 0; i < 2; i++) {
+            Rectangle bounds = { 
+                startX2 + (i * (btnW + hSpacing)), 
+                startY + btnH + vSpacing, 
+                btnW, 
+                btnH 
+            };
+            if(strcmp(*enhancer, enhancers[i + 3]) == 0){
+                drawButton(bounds, enhancers[i + 3], GREEN);
+            }
+            else if (CheckCollisionPointRec(mousePos, bounds)) {
+                if (clicked) *enhancer = enhancers[i + 3];
+                drawButton(bounds, enhancers[i + 3], GRAY);
+            } else {
+                drawButton(bounds, enhancers[i + 3], DARKGRAY);
+            }
+        }
+
+        if(strlen(*enhancer) == 0) drawButton(btnNext, "NEXT", DARKGRAY);
+        else if(CheckCollisionPointRec(mousePos, btnNext)) drawButton(btnNext, "NEXT", MAROON);
+        else drawButton(btnNext, "NEXT", RED);
+    EndDrawing();
+}
+
 void drawProgressStage(Pipeline* p){
     BeginDrawing();
         ClearBackground((Color){60, 60, 60, 255});

@@ -8,7 +8,7 @@ int main(void)
     pipelineInit(&pipeline);
  
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "raylib project");
-    SetTargetFPS(60);
+    SetTargetFPS(100);
 
     int pipelineStarted = 0;
 
@@ -26,7 +26,7 @@ int main(void)
         if(stage == 0){
             drawSelectorStage(pipeline.batch.paths, &pipeline.batch.index, pipeline.batch.count, font, &stage);
         }else if(stage == 1){
-            drawProgressStage(&pipeline);
+            drawEnhancerStage(font, &pipeline.enhancerName, &stage);
         }else if(stage == 2){
             drawFinishStage(&pipeline);
         }
