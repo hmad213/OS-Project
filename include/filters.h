@@ -1,6 +1,11 @@
 #ifndef FILTERS_H
 #define FILTERS_H
 
+#define GRAYSCALE "Grayscale"
+#define SEPIA "Sepia"
+#define INVERT "Invert"
+#define FUNKY "Funky"
+
 #include "pipeline.h"
 
 void filterGrayscale(Image* img);

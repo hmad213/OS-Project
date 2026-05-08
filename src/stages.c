@@ -33,19 +33,19 @@ void* loader(void* param){
 void applyEnhancement(Image *img, const char *type){
     if(type == NULL || img->data == NULL) return;
 
-    if(strcmp(type, "Warmth") == 0){
+    if(strcmp(type, WARMTH) == 0){
         warmth(img);
     }
-    else if(strcmp(type, "Brighten") == 0){
+    else if(strcmp(type, BRIGHTEN) == 0){
         brighten(img);
     }
-    else if(strcmp(type, "Contrast") == 0){
+    else if(strcmp(type, CONTRAST) == 0){
         contrast(img);
     }
-    else if(strcmp(type, "Sharpen") == 0){
+    else if(strcmp(type, SHARPEN) == 0){
         sharpen(img);
     }
-    else if(strcmp(type, "Saturate") == 0){
+    else if(strcmp(type, SATURATE) == 0){
         saturate(img);
     }
 }
@@ -82,16 +82,16 @@ void* enhancer(void* param){
 void applyFilter(Image* img, const char* type){
     if(type == NULL || img->data == NULL) return;
 
-    if(strcmp(type , "grayscale") == 0){
+    if(strcmp(type , GRAYSCALE) == 0){
         filterGrayscale(img);
     } 
-    else if(strcmp(type , "funky") == 0){
+    else if(strcmp(type , FUNKY) == 0){
         filterFunky(img);
     } 
-    else if(strcmp(type , "invert") == 0){
+    else if(strcmp(type , INVERT) == 0){
         filterInvert(img);
     }
-    else if(strcmp(type , "sepia") == 0){
+    else if(strcmp(type , SEPIA) == 0){
         filterSepia(img);
     }
 }
