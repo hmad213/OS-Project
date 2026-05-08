@@ -102,3 +102,37 @@ void* filter(void* param){
     }
     pthread_exit(NULL);
 }
+
+
+
+void* saver(void* param){
+    Pipeline* p = param;
+
+    mkdir("./output", 0777);              
+
+    while(1){
+        pthread_mutex_lock(&p->saverMutex);
+        int i = p->saverCount++;
+        pthread_mutex_unlock(&p->saverMutex);
+
+        if(i >= p->batch.count){
+            break;
+        }
+
+        Image img = bufferPop(&p->enhanced);
+        if(img.data == NULL){
+            continue;
+        }
+
+        const char* srcPath = p->batch.paths[i];
+        const char* filename = strrchr(srcPath, '/');
+        const char* justName = filename ? filename + 1 : srcPath;  
+        char outPath[512];
+        strcpy(outPath, "./output/");   
+        strcat(outPath, justName);     
+
+        ExportImage(img, outPath);
+        UnloadImage(img);
+    }
+    pthread_exit(NULL);
+}
