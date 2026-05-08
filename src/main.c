@@ -2,7 +2,7 @@
  
 int main(void)
 {
-    int stage = 0;
+    int stage = 1;
 
     Pipeline pipeline;
     pipelineInit(&pipeline);
@@ -18,7 +18,7 @@ int main(void)
     {
         BeginDrawing();
 
-        if(stage == 1 && !pipelineStarted){
+        if(stage == 3 && !pipelineStarted){
             runPipeline(&pipeline);
             pipelineStarted = 1;
         }
@@ -28,7 +28,9 @@ int main(void)
         }else if(stage == 1){
             drawEnhancerStage(font, &pipeline.enhancerName, &stage);
         }else if(stage == 2){
-            drawFinishStage(&pipeline);
+            drawFilterStage(font, &pipeline.filterName, &stage);
+        }else if(stage == 3){
+            drawProgressStage(&pipeline);
         }
 
         if(pipeline.saverCount > pipeline.batch.count){

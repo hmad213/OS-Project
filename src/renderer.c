@@ -113,7 +113,7 @@ void drawEnhancerStage(Font font, char** enhancer, int* stage){
     float centerY = (SCREEN_HEIGHT / 2.0f);
     Rectangle btnNext = {(SCREEN_WIDTH / 2.0f) - (200 / 2.0f), (SCREEN_HEIGHT / 2.0f) + 100.0f, 200, 60};
 
-    if(clicked && CheckCollisionPointRec(mousePos, btnNext)){
+    if(clicked && CheckCollisionPointRec(mousePos, btnNext) && strlen(*enhancer) > 0){
         (*stage) = (*stage) + 1;
     }
 
@@ -158,6 +158,65 @@ void drawEnhancerStage(Font font, char** enhancer, int* stage){
         }
 
         if(strlen(*enhancer) == 0) drawButton(btnNext, "NEXT", DARKGRAY);
+        else if(CheckCollisionPointRec(mousePos, btnNext)) drawButton(btnNext, "NEXT", MAROON);
+        else drawButton(btnNext, "NEXT", RED);
+    EndDrawing();
+}
+
+void drawFilterStage(Font font, char** filter, int* stage){
+    const char* filters[] = {
+        GRAYSCALE, SEPIA, INVERT, FUNKY
+    };
+
+    char* selectorText = "Please select a Filter: ";
+    Vector2 imgTextSize = MeasureTextEx(font, selectorText, 30, 2.0f);
+
+    float btnW = 180.0f;
+    float btnH = 50.0f;
+    float hSpacing = 20.0f;
+    float vSpacing = 20.0f;
+    float startY = 250.0f;
+
+    float rowWidth = (2 * btnW) + (2 * hSpacing);
+
+    float filtersStartX = (GetScreenWidth() - rowWidth) / 2.0f;
+
+    Vector2 mousePos = GetMousePosition();
+    bool clicked = IsMouseButtonPressed(MOUSE_LEFT_BUTTON);
+
+    float startX = (SCREEN_WIDTH / 2.0f) - (200 / 2.0f);
+    float centerY = (SCREEN_HEIGHT / 2.0f);
+    Rectangle btnNext = {(SCREEN_WIDTH / 2.0f) - (200 / 2.0f), (SCREEN_HEIGHT / 2.0f) + 100.0f, 200, 60};
+
+    if(clicked && CheckCollisionPointRec(mousePos, btnNext) && strlen(*enhancer) > 0){
+        (*stage) = (*stage) + 1;
+    }
+
+    BeginDrawing();
+        ClearBackground((Color){60, 60, 60, 255});
+        DrawTextEx(font, selectorText, (Vector2){(SCREEN_WIDTH / 2) - (imgTextSize.x / 2), 150}, 30, 2.0f, GREEN);
+
+        for (int i = 0; i < 2; i++) {
+            for(int j = 0; j < 2; j++){
+                Rectangle bounds = { 
+                    filtersStartX + (i * (btnW + hSpacing)), 
+                    startY + j * (btnH + vSpacing), 
+                    btnW, 
+                    btnH 
+                };
+                if(strcmp(*filter, filters[i + j * 2]) == 0){
+                    drawButton(bounds, filters[i + j * 2], GREEN);
+                }
+                else if (CheckCollisionPointRec(mousePos, bounds)) {
+                    if (clicked) *filter = filters[i + j * 2];
+                    drawButton(bounds, filters[i + j * 2], GRAY);
+                } else {
+                    drawButton(bounds, filters[i + j * 2], DARKGRAY);
+                }
+            }
+        }
+
+        if(strlen(*filter) == 0) drawButton(btnNext, "NEXT", DARKGRAY);
         else if(CheckCollisionPointRec(mousePos, btnNext)) drawButton(btnNext, "NEXT", MAROON);
         else drawButton(btnNext, "NEXT", RED);
     EndDrawing();

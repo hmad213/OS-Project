@@ -27,8 +27,8 @@ void pipelineInit(Pipeline* p){
 
     batchInit(&p->batch, BATCH_SIZE);
 
-    p->filterName = "grayscale";
-    p->enhancerName = "Brighten";
+    p->filterName = "";
+    p->enhancerName = "";
 
     p->loaderCount = 0;
     p->filterCount = 0;
