@@ -2,20 +2,29 @@
  
 int main(void)
 {
-    const int screenWidth  = 800;
-    const int screenHeight = 600;
+    int stage = 0;
+
+    Pipeline pipeline;
+    pipelineInit(&pipeline);
  
-    InitWindow(screenWidth, screenHeight, "raylib project");
+    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "raylib project");
     SetTargetFPS(60);
+
+    Font font = LoadFont("./assets/Roboto.ttf");
 
     while (!WindowShouldClose())
     {
         BeginDrawing();
-            ClearBackground(RAYWHITE);
-            DrawText("It works!", 320, 200, 30, DARKGRAY);
+
+        if(stage == 0){
+            drawSelector(pipeline.batch.paths, &pipeline.batch.index, pipeline.batch.count, font, &stage);
+        }
+
         EndDrawing();
     }
  
     CloseWindow();
+
+    pipelineDestroy(&pipeline);
     return 0;
 }

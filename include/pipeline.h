@@ -6,12 +6,14 @@
 #define NUMBER_ENHANCERS 3
 #define NUMBER_SAVERS 2
 #define BUFFER_CAPACITY 10
+#define BATCH_SIZE 100
 
 #include "buffer.h"
 #include <pthread.h>
 
 typedef struct{
     char** paths;
+    int index;
     int count;
 }Batch;
 
@@ -46,5 +48,6 @@ void pipelineInit(Pipeline* p);
 void pipelineDestroy(Pipeline* p);
 void batchInit(Batch* b, int size);
 void batchDestroy(Batch* b);
+void runPipeline(Pipeline* p);
 
 #endif

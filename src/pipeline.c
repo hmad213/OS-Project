@@ -5,6 +5,7 @@
 void batchInit(Batch* b, int size){
     b->count = size;
     b->paths = (char**)malloc(size * sizeof(char*));
+    b->index = 0;
     for(int i = 0; i < size; i++){
         b->paths[i] = NULL; 
     }
@@ -16,12 +17,15 @@ void batchDestroy(Batch* b){
         b->paths = NULL;
     }
     b->count = 0;
+    b->index = 0;
 }
 
 void pipelineInit(Pipeline* p){
     bufferInit(&p->loaded, BUFFER_CAPACITY);
     bufferInit(&p->filtered, BUFFER_CAPACITY);
     bufferInit(&p->enhanced, BUFFER_CAPACITY);
+
+    batchInit(&p->batch, BATCH_SIZE);
 
     p->filterName = NULL;
     p->enhancerName = NULL;
@@ -42,11 +46,14 @@ void pipelineDestroy(Pipeline* p){
     bufferDestroy(&p->filtered);
     bufferDestroy(&p->enhanced);
 
+    batchDestroy(&p->batch);
+
     pthread_mutex_destroy(&p->loaderMutex);
     pthread_mutex_destroy(&p->filterMutex);
     pthread_mutex_destroy(&p->enhancerMutex);
     pthread_mutex_destroy(&p->saverMutex);
 }
 
-
-
+void runPipeline(Pipeline* p){
+    
+}
