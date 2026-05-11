@@ -11,6 +11,8 @@ int main(void)
     SetTargetFPS(100);
 
     int pipelineStarted = 0;
+    double pipelineStart;
+    int processingFinished = 0;
 
     Font font = LoadFont("./assets/Roboto.ttf");
 
@@ -20,7 +22,18 @@ int main(void)
 
         if(stage == 3 && !pipelineStarted){
             runPipeline(&pipeline);
+            pipelineStart = GetTime();
             pipelineStarted = 1;
+        }
+
+        if(pipelineStarted && !processingFinished){
+            if(pipeline.savedCount >= pipeline.batch.index){
+                double totalTime = GetTime() - pipelineStart;
+                processingFinished = 1;
+                printf("PIPELINING BENCHMARK\n");
+                printf("Image processed: %d\n", pipeline.savedCount);
+                printf("Total time taken: %.4f seconds\n", totalTime);
+            }
         }
 
         if(stage == 0){
